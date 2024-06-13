@@ -12,9 +12,7 @@ const findContact = async (contactId) => {
   try {
     const contactsData = await fs.readFile(contactsPath);
     const contacts = JSON.parse(contactsData);
-    const contact = contacts.find((contact) => contact.id === contactId);
-    // console.log(contact);
-    return contact;
+    return contacts;
   } catch (err) {
     console.log(err.message);
   }
@@ -31,10 +29,8 @@ export const listContacts = async () => {
 
 export const getContactById = async (contactId) => {
   try {
-    // const contactsData = await fs.readFile(contactsPath);
-    // const contacts = JSON.parse(contactsData);
-    // const contact = contacts.find((contact) => contact.id === contactId);
-    const contact = await findContact(contactId);
+    const contacts = await findContact(contactId);
+    const contact = contacts.find((contact) => contact.id === contactId);
 
     if (contact) {
       console.log(JSON.stringify(contact, null, 2));
@@ -50,8 +46,7 @@ export const getContactById = async (contactId) => {
 
 export const removeContact = async (contactId) => {
   try {
-    const contactsData = await fs.readFile(contactsPath);
-    const contacts = JSON.parse(contactsData);
+    const contacts = await findContact(contactId);
     const updatedContacts = contacts.filter(
       (contact) => contact.id !== contactId
     );
@@ -62,6 +57,17 @@ export const removeContact = async (contactId) => {
   }
 };
 
-const addContact = (name, email, phone) => {
-  // ...writeFile
+export const addContact = async (name, email, phone) => {
+  try {
+    const contacts = await findContact(contactId);
+    contacts.push({
+      id: "asdasd", // generate random id here
+      name,
+      email,
+      phone,
+    });
+    await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+  } catch (err) {
+    console.log(err);
+  }
 };
