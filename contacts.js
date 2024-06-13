@@ -8,20 +8,33 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const contactsPath = join(__dirname, "/db/contacts.json");
 // console.log(contactsPath);
 
-export const listContacts = () => {
-  fs.readFile(contactsPath)
-    .then((data) => {
-      // console.log(data.toString());
-      console.log("listContacts");
-    })
-    .catch((err) => console.log(err.message));
-};
-
-export const getContactById = async (contactId) => {
+const findContact = async (contactId) => {
   try {
     const contactsData = await fs.readFile(contactsPath);
     const contacts = JSON.parse(contactsData);
     const contact = contacts.find((contact) => contact.id === contactId);
+    // console.log(contact);
+    return contact;
+  } catch (err) {
+    console.log(err.message);
+  }
+};
+
+export const listContacts = async () => {
+  try {
+    const data = await fs.readFile(contactsPath);
+    console.log(data.toString());
+  } catch (err) {
+    console.log(err.message);
+  }
+};
+
+export const getContactById = async (contactId) => {
+  try {
+    // const contactsData = await fs.readFile(contactsPath);
+    // const contacts = JSON.parse(contactsData);
+    // const contact = contacts.find((contact) => contact.id === contactId);
+    const contact = await findContact(contactId);
 
     if (contact) {
       console.log(JSON.stringify(contact, null, 2));
@@ -35,8 +48,18 @@ export const getContactById = async (contactId) => {
   }
 };
 
-const removeContact = (contactId) => {
-  // ...writeFile
+export const removeContact = async (contactId) => {
+  try {
+    const contactsData = await fs.readFile(contactsPath);
+    const contacts = JSON.parse(contactsData);
+    const updatedContacts = contacts.filter(
+      (contact) => contact.id !== contactId
+    );
+
+    await fs.writeFile(contactsPath, JSON.stringify(updatedContacts, null, 2));
+  } catch (err) {
+    console.log(err.message);
+  }
 };
 
 const addContact = (name, email, phone) => {
