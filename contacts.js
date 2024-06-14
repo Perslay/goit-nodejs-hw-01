@@ -21,7 +21,8 @@ const findContact = async (contactId) => {
 export const listContacts = async () => {
   try {
     const data = await fs.readFile(contactsPath);
-    console.log(data.toString());
+    // console.log(data.toString());
+    return data.toString();
   } catch (err) {
     console.log(err.message);
   }
