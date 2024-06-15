@@ -1,14 +1,12 @@
 import { promises as fs } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
+import { v4 as uuidv4 } from "uuid";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-// console.log("__dirname: " + __dirname);
-
 const contactsPath = join(__dirname, "/db/contacts.json");
-// console.log(contactsPath);
 
-const findContact = async (contactId) => {
+const findContacts = async () => {
   try {
     const contactsData = await fs.readFile(contactsPath);
     const contacts = JSON.parse(contactsData);
@@ -21,7 +19,6 @@ const findContact = async (contactId) => {
 export const listContacts = async () => {
   try {
     const data = await fs.readFile(contactsPath);
-    // console.log(data.toString());
     return data.toString();
   } catch (err) {
     console.log(err.message);
@@ -30,15 +27,13 @@ export const listContacts = async () => {
 
 export const getContactById = async (contactId) => {
   try {
-    const contacts = await findContact(contactId);
+    const contacts = await findContacts(contactId);
     const contact = contacts.find((contact) => contact.id === contactId);
 
     if (contact) {
-      console.log(JSON.stringify(contact, null, 2));
-      // return contact;
+      return contact;
     } else {
       console.log("Contact not found");
-      // return null;
     }
   } catch (err) {
     console.log(err.message);
@@ -47,7 +42,7 @@ export const getContactById = async (contactId) => {
 
 export const removeContact = async (contactId) => {
   try {
-    const contacts = await findContact(contactId);
+    const contacts = await findContacts();
     const updatedContacts = contacts.filter(
       (contact) => contact.id !== contactId
     );
@@ -60,15 +55,17 @@ export const removeContact = async (contactId) => {
 
 export const addContact = async (name, email, phone) => {
   try {
-    const contacts = await findContact(contactId);
-    contacts.push({
-      id: "asdasd", // generate random id here
+    const contacts = await findContacts();
+    const newContact = {
+      id: uuidv4(),
       name,
       email,
       phone,
-    });
+    };
+    contacts.push(newContact);
+
     await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
   } catch (err) {
-    console.log(err);
+    console.log(err.message);
   }
 };

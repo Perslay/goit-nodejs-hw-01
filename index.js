@@ -5,27 +5,18 @@ import {
   removeContact,
   addContact,
 } from "./contacts.js";
-// listContacts();
-// getContactById("1DEXoP8AuCGYc1YgoQ6hw");
-// removeContact("1DEXoP8AuCGYc1YgoQ6hw");
-// addContact("Jan Kowalski", "kaczuszki@gmail.com", "(992) 914-3793");
-
-// const { Command } = require("commander");
 
 const program = new Command();
 program
-  .option("-a, --action <type>", "choose action", "list")
+  .option("-a, --action <type>", "choose action")
   .option("-i, --id <type>", "user id")
   .option("-n, --name <type>", "user name")
   .option("-e, --email <type>", "user email")
   .option("-p, --phone <type>", "user phone");
 
 program.parse(process.argv);
-
 const argv = program.opts();
-console.log("parsed options:", argv);
 
-// TODO: refaktor
 async function invokeAction({ action, id, name, email, phone }) {
   switch (action) {
     case "list":
@@ -39,13 +30,13 @@ async function invokeAction({ action, id, name, email, phone }) {
       break;
 
     case "add":
-      const newContact = await addContact(name, email, phone);
-      console.log(newContact);
+      await addContact(name, email, phone);
+      console.log("Added new contact.");
       break;
 
     case "remove":
-      const removedContact = await removeContact(id);
-      console.log(removedContact);
+      await removeContact(id);
+      console.log("Removed contact.");
       break;
 
     default:
